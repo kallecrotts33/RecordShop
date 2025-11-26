@@ -17,11 +17,9 @@ const Record = require('./models/Record');
 const Artist = require('./models/Artist');
 const Genre = require('./models/Genre');
 
-// Relationer
-Record.belongsTo(Artist, { foreignKey: "artist_id" });
-Artist.hasMany(Record, { foreignKey: "artist_id" });
-Record.belongsTo(Genre, { foreignKey: "genre_id" });
-Genre.hasMany(Record, { foreignKey: "genre_id" });
+
+
+
 
 // Configure Handlebars with main.hbs as default layout
 app.engine("hbs", exphbs.engine({ 
@@ -36,6 +34,16 @@ app.use((req, res, next) => {
     next();
 });
 
+// API routes
+const recordsRouter = require('./routes/api/records');
+app.use('/api/records', recordsRouter);
+
+// Relationer
+Artist.hasMany(Record, { foreignKey: 'artist_id' });
+Record.belongsTo(Artist, { foreignKey: 'artist_id' });
+Genre.hasMany(Record, { foreignKey: 'genre_id' });
+Record.belongsTo(Genre, { foreignKey: 'genre_id' });
+
 // Route for start page
 app.get("/", (req, res) => {
     res.render("index", { title: "Main Page" });
@@ -45,6 +53,8 @@ app.get("/", (req, res) => {
 app.get("/about", (req, res) => {
     res.render("about", { title: "About" });
 });
+
+
 
 // Start server
 const PORT = process.env.PORT || 3000;

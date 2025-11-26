@@ -23,4 +23,5 @@ const Record = sequelize.define('Record', {
   }
 }, { tableName: 'records', timestamps: false });
 
+
 module.exports = Record;
