@@ -6,7 +6,22 @@
 const port = process.env.DBWEBB_PORT || 1337;
 const express = require("express");
 const exphbs = require("express-handlebars");
+const path = require('path');
+require('dotenv').config();
 const app = express();
+
+const sequelize = require('./config/database');
+
+// Modeller
+const Record = require('./models/Record');
+const Artist = require('./models/Artist');
+const Genre = require('./models/Genre');
+
+// Relationer
+Record.belongsTo(Artist, { foreignKey: "artist_id" });
+Artist.hasMany(Record, { foreignKey: "artist_id" });
+Record.belongsTo(Genre, { foreignKey: "genre_id" });
+Genre.hasMany(Record, { foreignKey: "genre_id" });
 
 // Configure Handlebars with main.hbs as default layout
 app.engine("hbs", exphbs.engine({ 
@@ -32,6 +47,9 @@ app.get("/about", (req, res) => {
 });
 
 // Start server
-app.listen(port, () => {
-    console.info(`Server listening on port ${port}`);
+const PORT = process.env.PORT || 3000;
+sequelize.sync().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server: http://localhost:${PORT}`);
+  });
 });
