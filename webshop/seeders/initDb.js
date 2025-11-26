@@ -1,5 +1,5 @@
 const sequelize = require('../config/database');
-const Record = require('../models/Records');
+const Record = require('../models/Record');
 const Artist = require('../models/Artist');
 const Genre = require('../models/Genre');
 
