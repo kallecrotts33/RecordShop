@@ -45,6 +45,11 @@ app.use((req, res, next) => {
 // API routes
 const recordsRouter = require('./routes/api/records');
 app.use('/api/records', recordsRouter);
+const artistsRouter = require('./routes/api/artists');
+app.use('/api/artists', artistsRouter);
+// const genresRouter = require('./routes/api/genres');
+// app.use('/api/genres', genresRouter);
+
 
 //Swagger docs route
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

@@ -23,6 +23,14 @@ const options = {
             artist_id: { type: 'integer' },
             genre_id: { type: 'integer' }
           }
+        },
+        Artist: {
+          type: 'object',
+          properties: { artist_id: { type: 'integer' }, artist_name: { type: 'string' } }
+        },
+        Genre: {
+          type: 'object',
+          properties: { genre_id: { type: 'integer' }, genre_name: { type: 'string' } }
         }
       }
     }
