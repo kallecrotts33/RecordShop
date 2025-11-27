@@ -9,6 +9,7 @@ const exphbs = require("express-handlebars");
 const path = require('path');
 require('dotenv').config();
 const app = express();
+const { swaggerUi, swaggerSpec } = require('./swagger');
 
 const sequelize = require('./config/database');
 
@@ -37,6 +38,9 @@ app.use((req, res, next) => {
 // API routes
 const recordsRouter = require('./routes/api/records');
 app.use('/api/records', recordsRouter);
+
+//Swagger docs route
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Relationer
 Artist.hasMany(Record, { foreignKey: 'artist_id' });
