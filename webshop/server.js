@@ -10,7 +10,12 @@ const path = require('path');
 require('dotenv').config();
 const app = express();
 const { swaggerUi, swaggerSpec } = require('./swagger');
+const cors = require('cors');
+app.use(cors());
 app.use(express.json()); 
+
+// Serve images folder at /images URL
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 
 const sequelize = require('./config/database');
