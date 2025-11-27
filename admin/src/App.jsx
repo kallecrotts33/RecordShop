@@ -8,6 +8,10 @@ function ListRecords() {
     const [genres, setGenres] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [showRecordModal, setShowRecordModal] = useState(false);
+    const [showArtistModal, setShowArtistModal] = useState(false);
+    const [showGenreModal, setShowGenreModal] = useState(false);
+
     //Records
     const [newTitle, setNewTitle] = useState('');
     const [newPrice, setNewPrice] = useState('');
@@ -15,10 +19,21 @@ function ListRecords() {
     const [newImage, setNewImage] = useState('');
     const [selectedArtistId, setSelectedArtistId] = useState('');
     const [selectedGenreId, setSelectedGenreId] = useState('');
+    const [editId, setEditId] = useState(null);
+    const [editRecordTitle, setEditRecordTitle] = useState('');
+    const [editRecordPrice, setEditRecordPrice] = useState('');
+    const [editRecordDescription, setEditRecordDescription] = useState('');
+    const [editRecordGenre, setEditRecordGenre] = useState('');
+    const [editRecordArtist, setEditRecordArtist] = useState('');
+    const [editRecordImage, setEditRecordImage] = useState('');
     //Artists
     const [newArtistName, setNewArtistName] = useState('');
+    const [editArtistName, setEditArtistName] = useState('');
+
     //Genres
     const [newGenreName, setNewGenreName] = useState('');
+    const [editGenreName, setEditGenreName] = useState('');
+
     const apiUrl = import.meta.env.VITE_API_URL;
 
 
@@ -83,6 +98,56 @@ function ListRecords() {
             })
             .catch((err) => setError(err.message));
     };
+    // Edit a record
+    const startEditRecord = (item) => {
+        setEditId(item.record_id);
+        setEditRecordTitle(item.record_title);
+        setEditRecordPrice(item.price);
+        setEditRecordDescription(item.description);
+        setEditRecordGenre(item.genre_id);
+        setEditRecordArtist(item.artist_id);
+        setEditRecordImage(item.image_src);
+        setShowRecordModal(true);
+    };
+    const saveEditRecord = (id) => {
+        const payload = {
+            record_title: editRecordTitle,
+            price: parseFloat(editRecordPrice).toFixed(2),
+            description: editRecordDescription,
+            artist_id: parseInt(editRecordArtist),
+            genre_id: parseInt(editRecordGenre),
+            image_src: editRecordImage
+        };
+        axios
+            .put(`${apiUrl}/records/${id}`, payload)
+            .then(() => axios.get(apiUrl + "/records")) // refresh records
+            .then((response) => {
+                setData(response.data); // update UI
+                setShowRecordModal(false); // close modal
+                // Reset edit fields
+                setEditId(null);
+                setEditRecordTitle('');
+                setEditRecordPrice('');
+                setEditRecordDescription('');
+                setEditRecordArtist('');
+                setEditRecordGenre('');
+                setEditRecordImage('');
+            })
+            .catch(err => {
+                console.error(err);
+                setError(err.message);
+            });
+    };
+    const deleteRecord = (id) => {
+        axios
+            .delete(apiUrl + '/records/' + id)
+            .then(() => axios.get(apiUrl + "/records")) // refresh list
+            .then((response) => {
+                setData(response.data);
+            })
+            .catch((err) => setError(err.message));
+    };
+
 
     // Add an artist
     const addArtist = () => {
@@ -98,6 +163,40 @@ function ListRecords() {
 
                 // Reset form
                 setNewArtistName('');
+            })
+            .catch((err) => setError(err.message));
+    };
+    // Edit an artist
+    const startEditArtist = (item) => {
+        setEditId(item.artist_id);
+        setEditArtistName(item.artist_name);
+        setShowArtistModal(true);
+    };
+    const saveEditArtist = (id) => {
+        const payload = {
+            artist_name: editArtistName,
+        };
+        axios
+            .put(`${apiUrl}/artists/${id}`, payload)
+            .then(() => axios.get(apiUrl + "/artists")) // refresh records
+            .then((response) => {
+                setArtists(response.data); // update UI
+                setShowArtistModal(false); // close modal
+                // Reset edit fields
+                setEditId(null);
+                setEditArtistName('');
+            })
+            .catch(err => {
+                console.error(err);
+                setError(err.message);
+            });
+    };
+    const deleteArtist = (id) => {
+        axios
+            .delete(apiUrl + '/artists/' + id)
+            .then(() => axios.get(apiUrl + "/artists")) // refresh list
+            .then((response) => {
+                setArtists(response.data);
             })
             .catch((err) => setError(err.message));
     };
@@ -119,6 +218,42 @@ function ListRecords() {
             })
             .catch((err) => setError(err.message));
     };
+    // Edit a genre
+    const startEditGenre = (item) => {
+        setEditId(item.genre_id);
+        setEditGenreName(item.genre_name);
+        setShowGenreModal(true);
+    };
+    const saveEditGenre = (id) => {
+        const payload = {
+            genre_name: editGenreName,
+        };
+        axios
+            .put(`${apiUrl}/genres/${id}`, payload)
+            .then(() => axios.get(apiUrl + "/genres")) // refresh records
+            .then((response) => {
+                setGenres(response.data); // update UI
+                setShowGenreModal(false); // close modal
+                // Reset edit fields
+                setEditId(null);
+                setEditGenreName('');
+            })
+            .catch(err => {
+                console.error(err);
+                setError(err.message);
+            });
+    };
+    const deleteGenre = (id) => {
+        axios
+            .delete(apiUrl + '/genres/' + id)
+            .then(() => axios.get(apiUrl + "/genres")) // refresh list
+            .then((response) => {
+                setGenres(response.data);
+            })
+            .catch((err) => setError(err.message));
+    };
+
+
 
 
 
@@ -253,6 +388,7 @@ function ListRecords() {
                                 <th scope="col">Price</th>
                                 <th scope="col">Description</th>
                                 <th scope="col">Image</th>
+                                <th scope='col'>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -262,15 +398,18 @@ function ListRecords() {
                                     <td>{item.record_title}</td>
                                     <td>{item.Artist?.artist_name || '-'}</td>
                                     <td>{item.Genre?.genre_name || '-'}</td>
-                                    <td>{item.price} €</td>
+                                    <td>{parseFloat(item.price).toFixed(2)} €</td>
                                     <td>{item.description}</td>
                                     <td className="text-start">
                                         <img
                                             className="img-fluid rounded-2"
                                             style={{ maxWidth: '100px' }}
                                             src={`http://localhost:3000/${item.image_src}`}
-                                            alt={item.record_title}
                                         />
+                                    </td>
+                                    <td className='vstack gap-3'>
+                                        <button style={{ maxWidth: '100px' }} className="btn btn-info" onClick={() => startEditRecord(item)}>Edit</button>
+                                        <button style={{ maxWidth: '100px' }} className="btn btn-danger" onClick={() => deleteRecord(item.record_id)}>Delete</button>
                                     </td>
                                 </tr>
                             ))}
@@ -279,7 +418,7 @@ function ListRecords() {
                 </div>
             </div>
 
-             <div>
+            <div>
                 <h1 className="mb-4">Artists ({artists.length})</h1>
                 {/* List of artists*/}
                 <div className="table-responsive">
@@ -288,6 +427,7 @@ function ListRecords() {
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -295,6 +435,10 @@ function ListRecords() {
                                 <tr key={item.artist_id}>
                                     <td>{item.artist_id}</td>
                                     <td>{item.artist_name}</td>
+                                     <td className='vstack gap-3'>
+                                        <button style={{ maxWidth: '100px' }} className="btn btn-info" onClick={() => startEditArtist(item)}>Edit</button>
+                                        <button style={{ maxWidth: '100px' }} className="btn btn-danger" onClick={() => deleteArtist(item.artist_id)}>Delete</button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
@@ -311,6 +455,7 @@ function ListRecords() {
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -318,6 +463,10 @@ function ListRecords() {
                                 <tr key={item.genre_id}>
                                     <td>{item.genre_id}</td>
                                     <td>{item.genre_name}</td>
+                                     <td className='vstack gap-3'>
+                                        <button style={{ maxWidth: '100px' }} className="btn btn-info" onClick={() => startEditGenre(item)}>Edit</button>
+                                        <button style={{ maxWidth: '100px' }} className="btn btn-danger" onClick={() => deleteGenre(item.genre_id)}>Delete</button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
@@ -325,9 +474,109 @@ function ListRecords() {
                 </div>
             </div>
 
+            {/* Edit Record Modal */}
+            <div className={`modal ${showRecordModal ? 'd-block' : ''}`} tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title">Edit Record</h5>
+                            <button type="button" className="btn-close" onClick={() => setShowRecordModal(false)}></button>
+                        </div>
+                        <div className="modal-body">
+                            <div className="mb-3">
+                                <label>Title</label>
+                                <input type="text" className="form-control" value={editRecordTitle} onChange={(e) => setEditRecordTitle(e.target.value)} />
+                            </div>
+                            <div className="mb-3">
+                                <label>Price</label>
+                                <input type="number" className="form-control" value={editRecordPrice} onChange={(e) => setEditRecordPrice(e.target.value)} />
+                            </div>
+                            <div className="mb-3">
+                                <label>Description</label>
+                                <input type="text" className="form-control" value={editRecordDescription} onChange={(e) => setEditRecordDescription(e.target.value)} />
+                            </div>
+                            <div className="mb-3">
+                                <label>Artist</label>
+                                <select className="form-select" value={editRecordArtist} onChange={(e) => setEditRecordArtist(e.target.value)}>
+                                    <option value="">Select Artist</option>
+                                    {artists.map((artist) => (
+                                        <option key={artist.artist_id} value={artist.artist_id}>{artist.artist_name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="mb-3">
+                                <label>Genre</label>
+                                <select className="form-select" value={editRecordGenre} onChange={(e) => setEditRecordGenre(e.target.value)}>
+                                    <option value="">Select Genre</option>
+                                    {genres.map((genre) => (
+                                        <option key={genre.genre_id} value={genre.genre_id}>{genre.genre_name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="mb-3">
+                                <label>Image Source</label>
+                                <input type="text" className="form-control" value={editRecordImage} onChange={(e) => setEditRecordImage(e.target.value)} />
+                            </div>
+                        </div>
+                        <div className="modal-footer">
+                            <button className="btn btn-secondary" onClick={() => setShowRecordModal(false)}>Cancel</button>
+                            <button className="btn btn-primary" onClick={() => { saveEditRecord(editId); setShowRecordModal(false); }}>Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            {/* Edit Artist Modal */}
+            <div className={`modal ${showArtistModal ? 'd-block' : ''}`} tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title">Edit Artist</h5>
+                            <button type="button" className="btn-close" onClick={() => setShowArtistModal(false)}></button>
+                        </div>
+                        <div className="modal-body">
+                            <div className="mb-3">
+                                <label>Name</label>
+                                <input type="text" className="form-control" value={editArtistName} onChange={(e) => setEditArtistName(e.target.value)} />
+                            </div>
+                        </div>
+                        <div className="modal-footer">
+                            <button className="btn btn-secondary" onClick={() => setShowArtistModal(false)}>Cancel</button>
+                            <button className="btn btn-primary" onClick={() => { saveEditArtist(editId); setShowArtistModal(false); }}>Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Edit Genre Modal */}
+            <div className={`modal ${showGenreModal ? 'd-block' : ''}`} tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title">Edit Genre</h5>
+                            <button type="button" className="btn-close" onClick={() => setShowGenreModal(false)}></button>
+                        </div>
+                        <div className="modal-body">
+                            <div className="mb-3">
+                                <label>Name</label>
+                                <input type="text" className="form-control" value={editGenreName} onChange={(e) => setEditGenreName(e.target.value)} />
+                            </div>
+                        </div>
+                        <div className="modal-footer">
+                            <button className="btn btn-secondary" onClick={() => setShowGenreModal(false)}>Cancel</button>
+                            <button className="btn btn-primary" onClick={() => { saveEditGenre(editId); setShowGenreModal(false); }}>Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
 
 
         </div>
+
+
 
 
 
