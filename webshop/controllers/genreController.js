@@ -1,8 +1,8 @@
-const genre = require('../models/Genre');
+const Genre = require('../models/Genre');
 
 exports.getAll = async (req, res) => {
   try {
-    const genres = await genre.findAll();
+    const genres = await Genre.findAll();
     res.json(genres);
   } catch (err) {
     console.error(err);
@@ -12,8 +12,8 @@ exports.getAll = async (req, res) => {
 
 exports.getById = async (req, res) => {
   try {
-    const genre = await genre.findByPk(req.params.id);
-    if (!genre) return res.status(404).json({ error: 'genre not found' });
+    const genre = await Genre.findByPk(req.params.id);
+    if (!genre) return res.status(404).json({ error: 'Genre not found' });
     res.json(genre);
   } catch (err) {
     res.status(500).json({ error: 'Database error' });
@@ -22,7 +22,7 @@ exports.getById = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    const genre = await genre.create(req.body);
+    const genre = await Genre.create(req.body);
     res.status(201).json(genre);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -31,8 +31,8 @@ exports.create = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    const genre = await genre.findByPk(req.params.id);
-    if (!genre) return res.status(404).json({ error: 'genre not found' });
+    const genre = await Genre.findByPk(req.params.id);
+    if (!genre) return res.status(404).json({ error: 'Genre not found' });
     await genre.update(req.body);
     res.json(genre);
   } catch (err) {
@@ -42,10 +42,10 @@ exports.update = async (req, res) => {
 
 exports.delete = async (req, res) => {
   try {
-    const genre = await genre.findByPk(req.params.id);
-    if (!genre) return res.status(404).json({ error: 'genre not found' });
+    const genre = await Genre.findByPk(req.params.id);
+    if (!genre) return res.status(404).json({ error: 'Genre not found' });
     await genre.destroy();
-    res.json({ message: 'genre deleted' });
+    res.json({ message: 'Genre deleted' });
   } catch (err) {
     res.status(500).json({ error: 'Database error' });
   }
