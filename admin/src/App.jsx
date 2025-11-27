@@ -4,6 +4,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 function ListRecords() {
     const [data, setData] = useState([]);
+    const [artists, setArtists] = useState([]);
+    const [genres, setGenres] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [newTitle, setNewTitle] = useState('');
@@ -26,6 +28,22 @@ function ListRecords() {
             .catch((err) => {
                 setError(err.message);
                 setLoading(false);
+            });
+        // Load artists
+        axios.get(apiUrl + "/artists")
+            .then((response) => {
+                setArtists(response.data);
+            })
+            .catch((err) => {
+                setError(err.message);
+            });
+        // Load genres
+        axios.get(apiUrl + "/genres")
+            .then((response) => {
+                setGenres(response.data);
+            })
+            .catch((err) => {
+                setError(err.message);
             });
         
 
