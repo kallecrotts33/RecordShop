@@ -10,6 +10,8 @@ const path = require('path');
 require('dotenv').config();
 const app = express();
 const { swaggerUi, swaggerSpec } = require('./swagger');
+app.use(express.json()); 
+
 
 const sequelize = require('./config/database');
 

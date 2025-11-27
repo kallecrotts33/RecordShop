@@ -13,7 +13,7 @@ exports.getAll = async (req, res) => {
     res.json(records);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Databasfel' });
+    res.status(500).json({ error: 'Database error' });
   }
 };
 
@@ -25,10 +25,10 @@ exports.getById = async (req, res) => {
         { model: Genre, attributes: ['genre_id', 'genre_name'] }
       ]
     });
-    if (!record) return res.status(404).json({ error: 'Skiva ej funnen' });
+    if (!record) return res.status(404).json({ error: 'Record not found' });
     res.json(record);
   } catch (err) {
-    res.status(500).json({ error: 'Databasfel' });
+    res.status(500).json({ error: 'Database error' });
   }
 };
 
@@ -44,7 +44,7 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
   try {
     const record = await Record.findByPk(req.params.id);
-    if (!record) return res.status(404).json({ error: 'Skiva ej funnen' });
+    if (!record) return res.status(404).json({ error: 'Record not found' });
     await record.update(req.body);
     res.json(record);
   } catch (err) {
@@ -55,10 +55,10 @@ exports.update = async (req, res) => {
 exports.delete = async (req, res) => {
   try {
     const record = await Record.findByPk(req.params.id);
-    if (!record) return res.status(404).json({ error: 'Skiva ej funnen' });
+    if (!record) return res.status(404).json({ error: 'Record not found' });
     await record.destroy();
-    res.json({ message: 'Skiva raderad' });
+    res.json({ message: 'Record deleted' });
   } catch (err) {
-    res.status(500).json({ error: 'Databasfel' });
+    res.status(500).json({ error: 'Database error' });
   }
 };
