@@ -122,13 +122,11 @@ function ListRecords() {
 
 
 
-    if (loading) return <div className="p-5">Laddar...</div>;
+    if (loading) return <div className="p-5">Loading...</div>;
     if (error) return <div className="p-5 text-danger">Error: {error}</div>;
 
     return (
         <div className="container mt-5">
-            <h1 className="mb-4">Records ({data.length})</h1>
-
             <div>
                 <h3>Input New Record</h3>
                 {/* Input for new record */}
@@ -242,11 +240,13 @@ function ListRecords() {
             </div>
 
             <div>
+                <h1 className="mb-4">Records ({data.length})</h1>
                 {/* List of records */}
                 <div className="table-responsive">
                     <table className="table table-striped table-hover align-middle">
                         <thead className="table-info">
                             <tr>
+                                <th>ID</th>
                                 <th scope="col">Title</th>
                                 <th scope="col">Artist</th>
                                 <th scope="col">Genre</th>
@@ -258,6 +258,7 @@ function ListRecords() {
                         <tbody>
                             {data.map((item) => (
                                 <tr key={item.record_id}>
+                                    <td>{item.record_id}</td>
                                     <td>{item.record_title}</td>
                                     <td>{item.Artist?.artist_name || '-'}</td>
                                     <td>{item.Genre?.genre_name || '-'}</td>
@@ -277,6 +278,55 @@ function ListRecords() {
                     </table>
                 </div>
             </div>
+
+             <div>
+                <h1 className="mb-4">Artists ({artists.length})</h1>
+                {/* List of artists*/}
+                <div className="table-responsive">
+                    <table className="table table-striped table-hover align-middle">
+                        <thead className="table-info">
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {artists.map((item) => (
+                                <tr key={item.artist_id}>
+                                    <td>{item.artist_id}</td>
+                                    <td>{item.artist_name}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div>
+                <h1 className="mb-4">Genres ({genres.length})</h1>
+                {/* List of genres*/}
+                <div className="table-responsive">
+                    <table className="table table-striped table-hover align-middle">
+                        <thead className="table-info">
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {genres.map((item) => (
+                                <tr key={item.genre_id}>
+                                    <td>{item.genre_id}</td>
+                                    <td>{item.genre_name}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+
         </div>
 
 
