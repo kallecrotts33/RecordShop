@@ -75,15 +75,15 @@ function ListRecords() {
     const addRecord = () => {
         if (!newTitle.trim()) return;
 
-        axios
-            .post(apiUrl + '/records', {
-                record_title: newTitle,
-                price: parseFloat(newPrice),
-                description: newDescription,
-                image_src: newImage,
-                artist_id: parseInt(selectedArtistId),
-                genre_id: parseInt(selectedGenreId)
-            })
+        axios.post(apiUrl + '/records', {
+            record_title: newTitle,
+            price: parseFloat(newPrice),
+            description: newDescription,
+            image_src: newImage.split(',').map(img => img.trim()), // convert to array
+            artist_id: parseInt(selectedArtistId),
+            genre_id: parseInt(selectedGenreId)
+        })
+
             .then(() => axios.get(apiUrl + "/records")) // refresh list
             .then((response) => {
                 setData(response.data);
@@ -106,7 +106,15 @@ function ListRecords() {
         setEditRecordDescription(item.description);
         setEditRecordGenre(item.genre_id);
         setEditRecordArtist(item.artist_id);
-        setEditRecordImage(item.image_src);
+
+        // Make sure image_src is an array
+        const images = Array.isArray(item.image_src)
+            ? item.image_src
+            : item.image_src
+            ? [item.image_src] // wrap string in array
+            : [];
+
+        setEditRecordImage(images.join(', ')); // convert to comma-separated string for input
         setShowRecordModal(true);
     };
     const saveEditRecord = (id) => {
@@ -116,7 +124,7 @@ function ListRecords() {
             description: editRecordDescription,
             artist_id: parseInt(editRecordArtist),
             genre_id: parseInt(editRecordGenre),
-            image_src: editRecordImage
+            image_src: editRecordImage.split(',').map(img => img.trim())
         };
         axios
             .put(`${apiUrl}/records/${id}`, payload)
@@ -261,6 +269,7 @@ function ListRecords() {
     if (error) return <div className="p-5 text-danger">Error: {error}</div>;
 
     return (
+        
         <div className="container mt-5">
             <div>
                 <h1 className="mb-4">Records ({data.length})</h1>
@@ -294,11 +303,11 @@ function ListRecords() {
                     <input
                         type="text"
                         className="form-control me-2"
-                        placeholder="New Record Image source(s)"
+                        placeholder="New Image sources (comma-separated)"
                         value={newImage}
                         onChange={(e) => setNewImage(e.target.value)}
                         required
-                    />
+                        />
                     <select
                         className="form-select me-2"
                         value={selectedArtistId}
@@ -362,8 +371,12 @@ function ListRecords() {
                                     <td className="text-start">
                                         <img
                                             className="img-fluid rounded-2"
-                                            style={{ maxWidth: '100px' }}
-                                            src={`http://localhost:3000/${item.image_src[0]}`}
+                                            style={{
+                                                width: '80px',
+                                                height: '80px',
+                                                objectFit: 'cover'
+                                            }}
+                                            src={`http://localhost:3000/images/${item.image_src[0]}`}
                                         />
                                     </td>
                                     <td className='d-flex flex-column align-items-end gap-2'>
@@ -505,7 +518,7 @@ function ListRecords() {
                                 </select>
                             </div>
                             <div className="mb-3">
-                                <label>Image Source</label>
+                                <label>Image Source (comma separated) </label>
                                 <input type="text" className="form-control" value={editRecordImage} onChange={(e) => setEditRecordImage(e.target.value)} />
                             </div>
                         </div>
