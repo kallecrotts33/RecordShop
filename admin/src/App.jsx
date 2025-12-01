@@ -263,6 +263,7 @@ function ListRecords() {
     return (
         <div className="container mt-5">
             <div>
+                <h1 className="mb-4">Records ({data.length})</h1>
                 <h3>Input New Record</h3>
                 {/* Input for new record */}
                 <div className="mb-3 d-flex form ">
@@ -334,9 +335,50 @@ function ListRecords() {
                     </button>
 
                 </div>
+                {/* List of records */}
+                <div className="table-responsive">
+                    <table className="table table-striped table-hover align-middle">
+                        <thead className="table-info">
+                            <tr>
+                                <th>ID</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Artist</th>
+                                <th scope="col">Genre</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Image</th>
+                                <th className='text-end' scope='col'>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {data.map((item) => (
+                                <tr key={item.record_id}>
+                                    <td style={{ maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} >{item.record_id}</td>
+                                    <td style={{ maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} >{item.record_title}</td>
+                                    <td style={{ maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} >{item.Artist?.artist_name || '-'}</td>
+                                    <td style={{ maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} >{item.Genre?.genre_name || '-'}</td>
+                                    <td style={{ maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} >{parseFloat(item.price).toFixed(2)} €</td>
+                                    <td style={{ maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}title={item.description} >  {item.description}</td>
+                                    <td className="text-start">
+                                        <img
+                                            className="img-fluid rounded-2"
+                                            style={{ maxWidth: '100px' }}
+                                            src={`http://localhost:3000/${item.image_src}`}
+                                        />
+                                    </td>
+                                    <td className='d-flex flex-column align-items-end gap-2'>
+                                        <button style={{ width: '100px' }} className="btn btn-info" onClick={() => startEditRecord(item)}>Edit</button>
+                                        <button style={{ width: '100px' }} className="btn btn-danger" onClick={() => deleteRecord(item.record_id)}>Delete</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <div>
+                <h1 className="mb-4">Artists ({artists.length})</h1>
                 <h3>Input New Artist</h3>
                 {/* Input for new artist */}
                 <div className="mb-3 d-flex form ">
@@ -353,9 +395,34 @@ function ListRecords() {
                     </button>
 
                 </div>
+                {/* List of artists*/}
+                <div className="table-responsive">
+                    <table className="table table-striped table-hover align-middle">
+                        <thead className="table-info">
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th className='text-end'>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {artists.map((item) => (
+                                <tr key={item.artist_id}>
+                                    <td style={{ maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} >{item.artist_id}</td>
+                                    <td style={{ maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} >{item.artist_name}</td>
+                                    <td className='d-flex flex-column align-items-end gap-2' >
+                                        <button style={{ width: '100px' }} className="btn btn-info" onClick={() => startEditArtist(item)}>Edit</button>
+                                        <button style={{ width: '100px' }} className="btn btn-danger" onClick={() => deleteArtist(item.artist_id)}>Delete</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <div>
+                <h1 className="mb-4">Genres ({genres.length})</h1>
                 <h3>Input New Genre</h3>
                 {/* Input for new Genre */}
                 <div className="mb-3 d-flex form ">
@@ -372,82 +439,6 @@ function ListRecords() {
                     </button>
 
                 </div>
-            </div>
-
-            <div>
-                <h1 className="mb-4">Records ({data.length})</h1>
-                {/* List of records */}
-                <div className="table-responsive">
-                    <table className="table table-striped table-hover align-middle">
-                        <thead className="table-info">
-                            <tr>
-                                <th>ID</th>
-                                <th scope="col">Title</th>
-                                <th scope="col">Artist</th>
-                                <th scope="col">Genre</th>
-                                <th scope="col">Price</th>
-                                <th scope="col">Description</th>
-                                <th scope="col">Image</th>
-                                <th scope='col'>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {data.map((item) => (
-                                <tr key={item.record_id}>
-                                    <td>{item.record_id}</td>
-                                    <td>{item.record_title}</td>
-                                    <td>{item.Artist?.artist_name || '-'}</td>
-                                    <td>{item.Genre?.genre_name || '-'}</td>
-                                    <td>{parseFloat(item.price).toFixed(2)} €</td>
-                                    <td>{item.description}</td>
-                                    <td className="text-start">
-                                        <img
-                                            className="img-fluid rounded-2"
-                                            style={{ maxWidth: '100px' }}
-                                            src={`http://localhost:3000/${item.image_src}`}
-                                        />
-                                    </td>
-                                    <td className='vstack gap-3'>
-                                        <button style={{ maxWidth: '100px' }} className="btn btn-info" onClick={() => startEditRecord(item)}>Edit</button>
-                                        <button style={{ maxWidth: '100px' }} className="btn btn-danger" onClick={() => deleteRecord(item.record_id)}>Delete</button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div>
-                <h1 className="mb-4">Artists ({artists.length})</h1>
-                {/* List of artists*/}
-                <div className="table-responsive">
-                    <table className="table table-striped table-hover align-middle">
-                        <thead className="table-info">
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {artists.map((item) => (
-                                <tr key={item.artist_id}>
-                                    <td>{item.artist_id}</td>
-                                    <td>{item.artist_name}</td>
-                                     <td className='vstack gap-3'>
-                                        <button style={{ maxWidth: '100px' }} className="btn btn-info" onClick={() => startEditArtist(item)}>Edit</button>
-                                        <button style={{ maxWidth: '100px' }} className="btn btn-danger" onClick={() => deleteArtist(item.artist_id)}>Delete</button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div>
-                <h1 className="mb-4">Genres ({genres.length})</h1>
                 {/* List of genres*/}
                 <div className="table-responsive">
                     <table className="table table-striped table-hover align-middle">
@@ -455,17 +446,17 @@ function ListRecords() {
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
-                                <th>Actions</th>
+                                <th className='text-end'>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {genres.map((item) => (
                                 <tr key={item.genre_id}>
-                                    <td>{item.genre_id}</td>
-                                    <td>{item.genre_name}</td>
-                                     <td className='vstack gap-3'>
-                                        <button style={{ maxWidth: '100px' }} className="btn btn-info" onClick={() => startEditGenre(item)}>Edit</button>
-                                        <button style={{ maxWidth: '100px' }} className="btn btn-danger" onClick={() => deleteGenre(item.genre_id)}>Delete</button>
+                                    <td style={{ maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.genre_id}</td>
+                                    <td style={{ maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.genre_name}</td>
+                                    <td className='d-flex flex-column align-items-end gap-2'>
+                                        <button style={{ width: '100px' }} className="btn btn-info" onClick={() => startEditGenre(item)}>Edit</button>
+                                        <button style={{ width: '100px' }} className="btn btn-danger" onClick={() => deleteGenre(item.genre_id)}>Delete</button>
                                     </td>
                                 </tr>
                             ))}
@@ -525,7 +516,7 @@ function ListRecords() {
                     </div>
                 </div>
             </div>
-            
+
 
             {/* Edit Artist Modal */}
             <div className={`modal ${showArtistModal ? 'd-block' : ''}`} tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
