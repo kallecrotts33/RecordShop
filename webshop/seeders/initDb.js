@@ -15,7 +15,7 @@ async function initDb() {
   ]);
 
   const records = await Record.bulkCreate([
-    { record_title: "test record", price: 15.49, description: "This is a test description", image_src: "test source", artist_id: artists[0].artist_id, genre_id: genres[0].genre_id}
+    { record_title: "test record", price: 15.49, description: "This is a test description", image_src: ["picture1_1.jpg", "picture1_2.jpg", "picture1_3.jpg"], artist_id: artists[0].artist_id, genre_id: genres[0].genre_id}
   ]);
 
   console.log('Databas initierad med dummydata!');

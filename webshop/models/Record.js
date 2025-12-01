@@ -10,7 +10,7 @@ const Record = sequelize.define('Record', {
   record_title: { type: DataTypes.TEXT, allowNull: false },
   price: { type: DataTypes.DECIMAL(10, 2), allowNull: false },
   description: { type: DataTypes.TEXT },
-  image_src: {type: DataTypes.TEXT},
+  image_src: {type: DataTypes.JSON},
   artist_id: {type: DataTypes.INTEGER, allowNull: false, references:{
       model: 'artists',
       key: 'artist_id'

@@ -363,7 +363,7 @@ function ListRecords() {
                                         <img
                                             className="img-fluid rounded-2"
                                             style={{ maxWidth: '100px' }}
-                                            src={`http://localhost:3000/${item.image_src}`}
+                                            src={`http://localhost:3000/${item.image_src[0]}`}
                                         />
                                     </td>
                                     <td className='d-flex flex-column align-items-end gap-2'>

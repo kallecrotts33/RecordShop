@@ -1,0 +1,64 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<div class="container mt-5 text-center bg-light p-4 rounded">
+    <h1>Products</h1>
+    <p>These are the products in stock</p>
+
+    <div id="recordGrid" class="row mt-5"></div>
+</div>
+
+<script>
+    // get records from API
+    fetch("http://localhost:3000/api/records")
+        .then(res => res.json())
+        .then(data => {
+            console.log("Records:", data);
+            let records = data;
+            const grid = document.getElementById("recordGrid");
+
+            if (records.length === 0) {
+                recordGrid.innerHTML = `<p class="text-danger">Sorry! We are out of stock.</p>`;
+            }
+            else {
+                records.forEach((record) => {
+                    const carouselId = `carousel-${record.record_id}`;
+                    const carouselItems = record.image_src.map((image_src, i) => `
+                        <div class="carousel-item ${i === 0 ? 'active' : ''}">
+                            <img 
+                                src="images/${image_src}" 
+                                class="d-block w-100 rounded-3" 
+                                alt="${record.record_title} image ${i + 1}" 
+                                onerror="this.onerror=null; this.src='images/placeholder.jpg';"
+                            >
+                        </div>`
+                    ).join("");
+                    const html = `
+                    <div class="col-md-6 mb-5">
+                        <div class="card h-100">
+                            <div id="${carouselId}" class="carousel slide mx-auto mt-3" data-bs-interval="false" style="max-width: 400px;">
+                                <div class="carousel-inner">${carouselItems}</div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#${carouselId}" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#${carouselId}" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                            <div class="card-body text-center mt-3">
+                                <h5 class="card-title fw-bold text-primary">${record.record_title}</h5>
+                                <p class="card-text fs-5 fw-semibold text-success mb-3">${record.price.toFixed(2)}€</p>
+                                <button class="btn btn-outline-primary w-100 add-to-cart" data-id="${record.id}">Add to Cart</button>
+                                <button class="btn btn-outline-success w-100 mt-2 info-btn" data-id="${record.id}">Info</button>
+                            </div>
+                        </div>
+                    </div>`;
+                    grid.insertAdjacentHTML("beforeend", html);
+                });
+            }
+
+        })
+        .catch(err => console.error(err));
+
+</script>
+

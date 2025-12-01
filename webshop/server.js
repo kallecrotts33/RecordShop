@@ -60,14 +60,15 @@ Record.belongsTo(Artist, { foreignKey: 'artist_id' });
 Genre.hasMany(Record, { foreignKey: 'genre_id' });
 Record.belongsTo(Genre, { foreignKey: 'genre_id' });
 
-// Route for start page
+// Route for navigation
 app.get("/", (req, res) => {
     res.render("index", { title: "Main Page" });
 });
-
-// Route for about page
 app.get("/about", (req, res) => {
     res.render("about", { title: "About" });
+});
+app.get("/products", (req, res) => {
+    res.render("products", { title: "Products" });
 });
 
 
