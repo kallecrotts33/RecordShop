@@ -376,7 +376,7 @@ function ListRecords() {
                                                 height: '80px',
                                                 objectFit: 'cover'
                                             }}
-                                            src={`http://localhost:3000/images/${item.image_src[0]}`}
+                                            src={`http://localhost:3000/images/${item.image_src[0]}.jpg`}
                                         />
                                     </td>
                                     <td className='d-flex flex-column align-items-end gap-2'>

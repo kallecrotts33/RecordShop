@@ -67,8 +67,10 @@ app.get("/", (req, res) => {
 app.get("/about", (req, res) => {
     res.render("about", { title: "About" });
 });
-app.get("/products", (req, res) => {
-    res.render("products", { title: "Products" });
+app.get("/products", async (req, res) => {
+    const records = await fetch("http://localhost:3000/api/records")
+        .then(r => r.json());
+    res.render("products", { records });
 });
 
 
