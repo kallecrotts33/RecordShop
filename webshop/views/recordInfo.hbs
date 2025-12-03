@@ -1,5 +1,6 @@
 <div class="container mt-5">
     <a href="/products" class="btn btn-secondary">Back</a>
+    <a class="btn btn-outline-primary add-to-cart" data-id="{{record.record_id}}">Add to Cart</a>
     <h1>{{record.record_title}}</h1>
     <p>Price: {{record.price}} €</p>
     <div class="container mt-4 bg-light rounded mb-4 p-2">
@@ -13,3 +14,14 @@
         >
     {{/each}}    
 </div>
+
+<script>
+    document.addEventListener("click", (e) => {
+        if (e.target.classList.contains("add-to-cart")) {
+            const id = e.target.dataset.id;
+            const currentQty = parseInt(sessionStorage.getItem(`record_${id}`)) || 0;
+            sessionStorage.setItem(`record_${id}`, currentQty + 1);
+            updateCartCount();
+        }
+    });
+</script>

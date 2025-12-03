@@ -62,5 +62,11 @@
             const id = e.target.dataset.id;
             window.location.href = `/recordInfo?id=${id}`;
         }
+        if (e.target.classList.contains("add-to-cart")) {
+            const id = e.target.dataset.id;
+            const currentQty = parseInt(sessionStorage.getItem(`record_${id}`)) || 0;
+            sessionStorage.setItem(`record_${id}`, currentQty + 1);
+            updateCartCount();
+        }
     });
 </script>

@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="sv">
+
 <head>
     <meta charset="UTF-8">
     <title>{{title}}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
-<body>
+
+<body class="d-flex flex-column min-vh-100">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <a class="navbar-brand">Kalles Record Shop</a>
@@ -20,11 +22,12 @@
                     <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
                 </ul>
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" id="currentInCart" href="cart.html">Cart (0)</a></li>
+                    <li class="nav-item"><a class="nav-link" id="currentInCart" href="/cart"></a></li>
                 </ul>
             </div>
         </div>
     </nav>
+    <main class="flex-grow-1">
         {{{body}}}
     </main>
     <footer>
@@ -33,4 +36,20 @@
         </div>
     </footer>
 </body>
+
 </html>
+
+<script>
+    function updateCartCount() {
+        const cartKeys = Object.keys(sessionStorage).filter(key => key.startsWith("record_"));
+        const totalCount = cartKeys.reduce((total, key) => {
+            const qty = parseInt(sessionStorage.getItem(key)) || 0;
+            return total + qty;
+        }, 0);
+        const cartElement = document.getElementById('currentInCart');
+        if (cartElement) {
+            cartElement.textContent = `Cart (${totalCount})`;
+        }
+    }
+    document.addEventListener('DOMContentLoaded', updateCartCount);
+</script>

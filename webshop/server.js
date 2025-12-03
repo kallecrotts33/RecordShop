@@ -79,6 +79,11 @@ app.get("/recordInfo", async (req, res) => {
         .then(r => r.json());
     res.render("recordInfo", { record });
 });
+app.get("/cart", async (req, res) => {
+    const records = await fetch("http://localhost:3000/api/records")
+        .then(r => r.json());
+    res.render("cart", { records, title: "Shopping Cart" });
+});
 
 
 
