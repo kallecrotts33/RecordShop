@@ -48,6 +48,7 @@ app.use('/api/records', recordsRouter);
 const artistsRouter = require('./routes/api/artists');
 app.use('/api/artists', artistsRouter);
 const genresRouter = require('./routes/api/genres');
+const { title } = require("process");
 app.use('/api/genres', genresRouter);
 
 
@@ -70,8 +71,15 @@ app.get("/about", (req, res) => {
 app.get("/products", async (req, res) => {
     const records = await fetch("http://localhost:3000/api/records")
         .then(r => r.json());
-    res.render("products", { records });
+    res.render("products", { records, title: "Products" });
 });
+app.get("/recordInfo", async (req, res) => {
+    const id = req.query.id;
+    const record = await fetch(`http://localhost:3000/api/records/${id}`)
+        .then(r => r.json());
+    res.render("recordInfo", { record });
+});
+
 
 
 

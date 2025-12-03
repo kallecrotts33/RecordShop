@@ -17,7 +17,9 @@
                             <div class="carousel-item {{#if @first}}active{{/if}}">
                                 <img src="/images/{{this}}.jpg"
                                      class="d-block w-100 rounded-3"
-                                     alt="{{../record_title}} image {{@index}}">
+                                     alt="{{../record_title}} image {{@index}}"
+                                     onerror="this.onerror=null; this.src='/images/placeholder.jpg';"
+                                >           
                             </div>
                             {{/each}}
                         </div>
@@ -38,10 +40,10 @@
                         <p class="card-text fs-5 fw-semibold text-success mb-3">{{price}}€</p>
 
                         <button class="btn btn-outline-primary w-100 add-to-cart"
-                                data-id="{{id}}">Add to Cart</button>
+                                data-id="{{record_id}}">Add to Cart</button>
 
                         <button class="btn btn-outline-success w-100 mt-2 info-btn"
-                                data-id="{{id}}">Info</button>
+                                data-id="{{record_id}}">Info</button>
                     </div>
 
                 </div>
@@ -52,3 +54,13 @@
         {{/if}}
     </div>
 </div>
+
+
+<script>
+    document.addEventListener("click", (e) => {
+        if (e.target.classList.contains("info-btn")) {
+            const id = e.target.dataset.id;
+            window.location.href = `/recordInfo?id=${id}`;
+        }
+    });
+</script>
