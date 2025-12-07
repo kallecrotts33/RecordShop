@@ -71,8 +71,25 @@ app.get("/about", (req, res) => {
 app.get("/products", async (req, res) => {
     const records = await fetch("http://localhost:3000/api/records")
         .then(r => r.json());
-    res.render("products", { records, title: "Products" });
+
+    const artists = await fetch("http://localhost:3000/api/artists")
+        .then(r => r.json());
+
+    const genres = await fetch("http://localhost:3000/api/genres")
+        .then(r => r.json());
+    const enrichedRecords = records.map(record => {
+        const artist = artists.find(a => a.artist_id === record.artist_id);
+        const genre = genres.find(g => g.genre_id === record.genre_id);
+        return {
+            ...record,
+            artist_name: artist ? artist.artist_name : "Unknown Artist",
+            genre_name: genre ? genre.genre_name : "Unknown Genre"
+        };
+    });
+    res.render("products", { records: enrichedRecords, artists, genres, title: "Products" });
+
 });
+
 app.get("/recordInfo", async (req, res) => {
     const id = req.query.id;
     const record = await fetch(`http://localhost:3000/api/records/${id}`)

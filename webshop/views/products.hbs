@@ -2,55 +2,73 @@
     <h1>Products</h1>
     <p>These are the products in stock</p>
 
+    <div class="mb-4">
+        <input type="text" id="searchBar" class="form-control w-50 mx-auto" placeholder="Search records...">
+    </div>
+    <div class=" gap-3">
+        <select id="artistFilter" class="form-select w-50 mx-auto mb-2">
+            <option value="">Filter by artist</option>
+            {{#each artists}}
+            <option value="{{artist_name}}">{{artist_name}}</option>
+            {{/each}}
+        </select>
+        <select id="genreFilter" class="form-select w-50 mx-auto mb-2">
+            <option value="">Filter by genre</option>
+            {{#each genres}}
+            <option value="{{genre_name}}">{{genre_name}}</option>
+            {{/each}}
+        </select>
+    </div>
+
+
+
     <div id="recordGrid" class="row mt-5">
 
         {{#if records.length}}
-            {{#each records}}
-            <div class="col-md-6 mb-5">
-                <div class="card h-100">
+        {{#each records}}
+        <div class="col-md-6 mb-5">
+            <div class="card h-100">
 
-                    <div id="carousel-{{record_id}}" class="carousel slide mx-auto mt-3" 
-                         data-bs-interval="false" style="max-width:400px;">
-                        
-                        <div class="carousel-inner">
-                            {{#each image_src}}
-                            <div class="carousel-item {{#if @first}}active{{/if}}">
-                                <img src="/images/{{this}}.jpg"
-                                     class="d-block w-100 rounded-3"
-                                     alt="{{../record_title}} image {{@index}}"
-                                     onerror="this.onerror=null; this.src='/images/placeholder.jpg';"
-                                >           
-                            </div>
-                            {{/each}}
+                <div id="carousel-{{record_id}}" class="carousel slide mx-auto mt-3" data-bs-interval="false"
+                    style="max-width:400px;">
+
+                    <div class="carousel-inner">
+                        {{#each image_src}}
+                        <div class="carousel-item {{#if @first}}active{{/if}}">
+                            <img src="/images/{{this}}.jpg" class="d-block w-100 rounded-3"
+                                alt="{{../record_title}} image {{@index}}"
+                                onerror="this.onerror=null; this.src='/images/placeholder.jpg';">
                         </div>
-
-                        <button class="carousel-control-prev" type="button"
-                                data-bs-target="#carousel-{{record_id}}" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon"></span>
-                        </button>
-
-                        <button class="carousel-control-next" type="button"
-                                data-bs-target="#carousel-{{record_id}}" data-bs-slide="next">
-                            <span class="carousel-control-next-icon"></span>
-                        </button>
+                        {{/each}}
                     </div>
 
-                    <div class="card-body text-center mt-3">
-                        <h5 class="card-title fw-bold text-primary">{{record_title}}</h5>
-                        <p class="card-text fs-5 fw-semibold text-success mb-3">{{price}}€</p>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carousel-{{record_id}}"
+                        data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </button>
 
-                        <button class="btn btn-outline-primary w-100 add-to-cart"
-                                data-id="{{record_id}}">Add to Cart</button>
-
-                        <button class="btn btn-outline-success w-100 mt-2 info-btn"
-                                data-id="{{record_id}}">Info</button>
-                    </div>
-
+                    <button class="carousel-control-next" type="button" data-bs-target="#carousel-{{record_id}}"
+                        data-bs-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </button>
                 </div>
+
+                <div class="card-body text-center mt-3">
+                    <h5 class="card-title fw-bold text-primary">{{record_title}}</h5>
+                    <p class="card-text-artist fs-5 fw-semibold mb-3">{{artist_name}}</p>
+                    <p class="card-text-genre fw-semibold mb-3">{{genre_name}}</p>
+                    <p class="card-text-price fs-5 fw-semibold text-success mb-3">{{price}}€</p>
+
+                    <button class="btn btn-outline-primary w-100 add-to-cart" data-id="{{record_id}}">Add to
+                        Cart</button>
+                    <button class="btn btn-outline-success w-100 mt-2 info-btn" data-id="{{record_id}}">Info</button>
+                </div>
+
             </div>
-            {{/each}}
+        </div>
+        {{/each}}
         {{else}}
-            <p class="text-danger">Sorry! We are out of stock.</p>
+        <p class="text-danger">Sorry! We are out of stock.</p>
         {{/if}}
     </div>
 </div>
@@ -69,4 +87,37 @@
             updateCartCount();
         }
     });
+    // search and filter functionality
+    const searchInput = document.getElementById("searchBar");
+    const artistFilter = document.getElementById("artistFilter");
+    const genreFilter = document.getElementById("genreFilter");
+
+    function filterRecords() {
+        const searchValue = searchInput.value.toLowerCase();
+        const selectedArtist = artistFilter.value.toLowerCase();
+        const selectedGenre = genreFilter.value.toLowerCase();
+
+        const cards = document.querySelectorAll("#recordGrid .col-md-6");
+
+        cards.forEach(card => {
+            const title = card.querySelector(".card-title").innerText.toLowerCase();
+            const artist = card.querySelector(".card-text-artist").innerText.toLowerCase();
+            const genre = card.querySelector(".card-text-genre").innerText.toLowerCase();
+
+            if (
+                (title.includes(searchValue)) &&
+                (!selectedArtist || artist === selectedArtist) &&
+                (!selectedGenre || genre === selectedGenre)
+            ) {
+                card.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    }
+
+    // Event listeners
+    searchInput.addEventListener("input", filterRecords);
+    artistFilter.addEventListener("change", filterRecords);
+    genreFilter.addEventListener("change", filterRecords);
 </script>
