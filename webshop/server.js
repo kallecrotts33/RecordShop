@@ -25,8 +25,15 @@ const Record = require('./models/Record');
 const Artist = require('./models/Artist');
 const Genre = require('./models/Genre');
 
-
-
+const hbs = exphbs.create({
+    helpers: {
+        json: function(context) {
+            return JSON.stringify(context);
+        }
+    }
+});
+app.engine('handlebars', hbs.engine);
+app.set('view engine', 'handlebars');
 
 
 // Configure Handlebars with main.hbs as default layout
@@ -89,7 +96,6 @@ app.get("/products", async (req, res) => {
     res.render("products", { records: enrichedRecords, artists, genres, title: "Products" });
 
 });
-
 app.get("/recordInfo", async (req, res) => {
     const id = req.query.id;
     const record = await fetch(`http://localhost:3000/api/records/${id}`)

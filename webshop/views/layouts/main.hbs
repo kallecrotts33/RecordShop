@@ -41,15 +41,16 @@
 
 <script>
     function updateCartCount() {
-        const cartKeys = Object.keys(sessionStorage).filter(key => key.startsWith("record_"));
-        const totalCount = cartKeys.reduce((total, key) => {
-            const qty = parseInt(sessionStorage.getItem(key)) || 0;
-            return total + qty;
-        }, 0);
+        // Get the cart object from sessionStorage
+        const cart = JSON.parse(sessionStorage.getItem("cart")) || {};
+        // Sum all quantities
+        const totalCount = Object.values(cart).reduce((total, qty) => total + qty, 0);
+        // Update the cart element
         const cartElement = document.getElementById('currentInCart');
         if (cartElement) {
             cartElement.textContent = `Cart (${totalCount})`;
         }
     }
     document.addEventListener('DOMContentLoaded', updateCartCount);
+
 </script>

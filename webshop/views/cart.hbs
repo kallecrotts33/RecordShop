@@ -1,12 +1,96 @@
+<style>
+    .cart-item img {
+        max-height: 200px;
+        object-fit: contain;
+    }
+</style>
+
+
+
+
 <div class="container mt-5 text-center bg-light p-4 rounded">
     <h1>Shopping Cart</h1>
     <p>These are the products in your cart</p>
 
-    <div id="shoppingCart" class="row mt-5">
-        <ul id="cartList" class="list-group w-100"></ul>
+    <div id="recordGrid" class="row mt-4">
+        {{#if records.length}}
+        <ul class="list-unstyled">
+        {{#each records}}
+        <li class="cart-item mb-3" data-id="{{record_id}}" style="display:none;">
+            <div class="card shadow-sm">
+                <div class="row g-0 align-items-center">
+                    <div class="col-md-3 d-flex justify-content-start p-2">
+                        <img src="/images/{{image_src.[0]}}.jpg" class="img-fluid rounded" alt="{{record_title}}">
+                    </div>
+                    <div class="col-md-6 p-2 text-start">
+                        <h5 class="text-primary fw-bold mb-1">{{record_title}}</h5>
+                        <p class="card-text-price text-success fw-semibold mb-1">{{price}}€</p>
+                    </div>
+                    <div class="col-md-2 justify-content-start p-2">
+                        <p class="card-text-quantity mb-2 fw-semibold"></p>
+                        <button class="btn btn-danger btn remove-from-cart" data-id="{{record_id}}">Remove</button>
+                    </div>
+                </div>
+            </div>
+        </li>
+        {{/each}}
+        </ul>
+        <p class="total-price fw-bold fs-4 mt-4"></p>
+        {{else}}
+        <p class="text-danger">Sorry! We are out of stock.</p>
+        {{/if}}
     </div>
 </div>
 
+
+
 <script>
-    
+    document.addEventListener('DOMContentLoaded', () => {
+        const cart = JSON.parse(sessionStorage.getItem('cart') || '{}');
+
+        // Show only items in the cart and display their quantity
+        document.querySelectorAll('.cart-item').forEach(item => {
+            const id = item.dataset.id;
+            if (cart[id]) {
+                item.style.display = 'block';
+                item.querySelector('.card-text-quantity').innerText = `Quantity: ${cart[id]}`;
+            }
+        });
+
+        // Function to calculate and display total price
+        function updateTotal() {
+            let totalPrice = 0;
+            document.querySelectorAll('.cart-item').forEach(item => {
+                const id = item.dataset.id;
+                if (cart[id]) {
+                    const priceText = item.querySelector('.card-text-price').innerText;
+                    const price = parseFloat(priceText.replace('€', ''));
+                    totalPrice += price * cart[id];
+                }
+            });
+            const totalPriceEl = document.querySelector('.total-price');
+            totalPriceEl.innerText = `Total: ${totalPrice.toFixed(2)}€`;
+        }
+
+        updateTotal();
+
+        // Remove from cart (decrease quantity by 1)
+        document.querySelectorAll('.remove-from-cart').forEach(btn => {
+            btn.addEventListener('click', e => {
+                const id = e.target.dataset.id;
+                if (cart[id] > 1) {
+                    // Decrease quantity
+                    cart[id] -= 1;
+                    e.target.closest('.cart-item').querySelector('.card-text-quantity').innerText = `Quantity: ${cart[id]}`;
+                } else {
+                    // Remove item completely
+                    delete cart[id];
+                    e.target.closest('.cart-item').remove();
+                }
+                sessionStorage.setItem('cart', JSON.stringify(cart));
+                updateTotal();
+                updateCartCount();
+            });
+        });
+    });
 </script>
