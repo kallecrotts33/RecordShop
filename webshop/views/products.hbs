@@ -12,21 +12,26 @@
             <option value="{{artist_name}}">{{artist_name}}</option>
             {{/each}}
         </select>
-        <select id="genreFilter" class="form-select w-50 mx-auto mb-2">
+        <select id="genreFilter" class="form-select w-50 mx-auto mb-4">
             <option value="">Filter by genre</option>
             {{#each genres}}
             <option value="{{genre_name}}">{{genre_name}}</option>
             {{/each}}
         </select>
     </div>
+    <div class=" text-start">
+        <label for="itemsPerPage" class="form-label">Items per page:</label>
+        <select id="itemsPerPage" class="form-select w-25 d-inline-block ms-2 ">
+            <option value="4">4</option>
+            <option value="8">8</option>
+            <option value="12">12</option>
+        </select>
+    </div>
 
-
-
-    <div id="recordGrid" class="row mt-5">
-
+    <div id="recordGrid" class="row mt-1">
         {{#if records.length}}
         {{#each records}}
-        <div class="col-md-6 mb-5">
+        <div class="col-md-6 mb-5 record-card">
             <div class="card h-100">
 
                 <div id="carousel-{{record_id}}" class="carousel slide mx-auto mt-3" data-bs-interval="false"
@@ -71,10 +76,61 @@
         <p class="text-danger">Sorry! We are out of stock.</p>
         {{/if}}
     </div>
+
+    <div id="pagination" class="d-flex justify-content-center mt-4 gap-2"></div>
 </div>
 
 
 <script>
+    // Pagiation and Filtering Logic
+    const ITEMS_PER_PAGE = 4;
+    let currentPage = 1;
+    let allCards = [];
+    let filteredCards = [];
+    let itemsPerPage = 4;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        allCards = Array.from(document.querySelectorAll("#recordGrid .record-card"));
+        const itemsPerPageSelect = document.getElementById("itemsPerPage");
+        itemsPerPageSelect.addEventListener("change", (e) => {
+            itemsPerPage = parseInt(e.target.value);
+            displayPage(1);
+        });
+        displayPage(1);
+    });
+
+    function displayPage(page) {
+        currentPage = page;
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+
+        allCards.forEach(card => {
+            card.style.display = "none";
+        });
+
+        filteredCards.slice(start, end).forEach(card => {
+            card.style.display = "block";
+        });
+
+        renderPagination();
+    }
+
+    function renderPagination() {
+        const totalPages = Math.ceil(filteredCards.length / itemsPerPage);
+        const paginationDiv = document.getElementById("pagination");
+        paginationDiv.innerHTML = "";
+
+        if (totalPages <= 1) return;
+
+        for (let i = 1; i <= totalPages; i++) {
+            const btn = document.createElement("button");
+            btn.className = `btn ${i === currentPage ? "btn-primary" : "btn-outline-primary"}`;
+            btn.innerText = i;
+            btn.addEventListener("click", () => displayPage(i));
+            paginationDiv.appendChild(btn);
+        }
+    }
+
     document.addEventListener("click", (e) => {
         if (e.target.classList.contains("info-btn")) {
             const id = e.target.dataset.id;
@@ -91,39 +147,46 @@
             sessionStorage.setItem("cart", JSON.stringify(cart));
             updateCartCount();
         }
-
     });
-    // search and filter functionality
+
     const searchInput = document.getElementById("searchBar");
     const artistFilter = document.getElementById("artistFilter");
     const genreFilter = document.getElementById("genreFilter");
+    const itemsPerPageSelect = document.getElementById("itemsPerPage");
 
     function filterRecords() {
         const searchValue = searchInput.value.toLowerCase();
         const selectedArtist = artistFilter.value.toLowerCase();
         const selectedGenre = genreFilter.value.toLowerCase();
 
-        const cards = document.querySelectorAll("#recordGrid .col-md-6");
-
-        cards.forEach(card => {
+        filteredCards = allCards.filter(card => {
             const title = card.querySelector(".card-title").innerText.toLowerCase();
             const artist = card.querySelector(".card-text-artist").innerText.toLowerCase();
             const genre = card.querySelector(".card-text-genre").innerText.toLowerCase();
 
-            if (
+            return (
                 (title.includes(searchValue)) &&
                 (!selectedArtist || artist === selectedArtist) &&
                 (!selectedGenre || genre === selectedGenre)
-            ) {
-                card.style.display = "block";
-            } else {
-                card.style.display = "none";
-            }
+            );
         });
+
+        displayPage(1);
     }
 
-    // Event listeners
     searchInput.addEventListener("input", filterRecords);
     artistFilter.addEventListener("change", filterRecords);
     genreFilter.addEventListener("change", filterRecords);
+
+    itemsPerPageSelect.addEventListener("change", (e) => {
+        ITEMS_PER_PAGE = parseInt(e.target.value);
+        displayPage(1);
+    });
+
+    // Initialize filteredCards
+    window.addEventListener("load", () => {
+        filteredCards = allCards;
+        displayPage(1);
+    });
 </script>
+</antml>
