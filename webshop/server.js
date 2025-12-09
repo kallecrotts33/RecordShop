@@ -43,11 +43,10 @@ app.engine("hbs", exphbs.engine({
 }));
 app.set("view engine", "hbs");
 
-// Middleware to log requests
-app.use((req, res, next) => {
-    console.info(`Request received on ${req.path} (${req.method})`);
-    next();
-});
+// Middleware
+const logger = require('./middleware/logger');
+app.use(logger);
+
 
 // API routes
 const recordsRouter = require('./routes/api/records');
