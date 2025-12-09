@@ -1,0 +1,100 @@
+<div class="container mt-5 text-center bg-light p-4 rounded">
+    <h1>My List</h1>
+    <p>These are your saved products</p>
+
+    <div id="recordGrid" class="row mt-1">
+        {{#if records.length}}
+        {{#each records}}
+        <div class="col-md-6 mb-5 record-card">
+            <div class="card h-100">
+
+                <div id="carousel-{{record_id}}" class="carousel slide mx-auto mt-3" data-bs-interval="false"
+                    style="max-width:400px;">
+
+                    <div class="carousel-inner">
+                        {{#each image_src}}
+                        <div class="carousel-item {{#if @first}}active{{/if}}">
+                            <img src="/images/{{this}}.jpg" class="d-block w-100 rounded-3"
+                                alt="{{../record_title}} image {{@index}}"
+                                onerror="this.onerror=null; this.src='/images/placeholder.jpg';">
+                        </div>
+                        {{/each}}
+                    </div>
+
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carousel-{{record_id}}"
+                        data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </button>
+
+                    <button class="carousel-control-next" type="button" data-bs-target="#carousel-{{record_id}}"
+                        data-bs-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </button>
+                </div>
+
+                <div class="card-body text-center mt-3">
+                    <h5 class="card-title fw-bold text-primary">{{record_title}}</h5>
+                    <p class="card-text-artist fs-5 fw-semibold mb-3">{{artist_name}}</p>
+                    <p class="card-text-genre fw-semibold mb-3">{{genre_name}}</p>
+                    <p class="card-text-price fs-5 fw-semibold text-success mb-3">{{price}}€</p>
+                    <div class="d-flex gap-2 mb-2">
+                        <button class="btn btn-outline-secondary btn-sm save-btn" data-id="{{record_id}}">Unsave</button>
+                        <button class="btn btn-outline-primary flex-grow-1 add-to-cart" data-id="{{record_id}}">Add to
+                            Cart</button>
+                    </div>
+                    <button class="btn btn-outline-success w-100 info-btn" data-id="{{record_id}}">Info</button>
+                </div>
+
+            </div>
+        </div>
+        {{/each}}
+        {{else}}
+        <p class="text-danger"></p>
+        {{/if}}
+    </div>
+</div>
+
+
+<script>
+    let allCards = [];
+
+    document.addEventListener("DOMContentLoaded", () => {
+        allCards = Array.from(document.querySelectorAll("#recordGrid .record-card"));
+        filterRecords();
+    });
+
+    function filterRecords() {
+        const saved = JSON.parse(sessionStorage.getItem("saved")) || [];
+
+        allCards.forEach(card => {
+            const recordId = card.querySelector(".save-btn").dataset.id;
+            card.style.display = saved.includes(recordId) ? "block" : "none";
+        });
+    }
+
+    document.addEventListener("click", (e) => {
+        if (e.target.classList.contains("info-btn")) {
+            const id = e.target.dataset.id;
+            window.location.href = `/recordInfo?id=${id}`;
+        }
+        if (e.target.classList.contains("add-to-cart")) {
+            const id = e.target.dataset.id;
+            const cart = JSON.parse(sessionStorage.getItem("cart")) || {};
+            if (cart[id]) {
+                cart[id] += 1;
+            } else {
+                cart[id] = 1;
+            }
+            sessionStorage.setItem("cart", JSON.stringify(cart));
+            updateCartCount();
+        }
+        if (e.target.classList.contains("save-btn")) {
+            const id = e.target.dataset.id;
+            const saved = JSON.parse(sessionStorage.getItem("saved")) || [];
+            const index = saved.indexOf(id);
+            saved.splice(index, 1);
+            sessionStorage.setItem("saved", JSON.stringify(saved));
+            filterRecords();
+        }
+    });
+</script>

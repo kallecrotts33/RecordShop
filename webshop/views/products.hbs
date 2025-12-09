@@ -63,10 +63,12 @@
                     <p class="card-text-artist fs-5 fw-semibold mb-3">{{artist_name}}</p>
                     <p class="card-text-genre fw-semibold mb-3">{{genre_name}}</p>
                     <p class="card-text-price fs-5 fw-semibold text-success mb-3">{{price}}€</p>
-
-                    <button class="btn btn-outline-primary w-100 add-to-cart" data-id="{{record_id}}">Add to
-                        Cart</button>
-                    <button class="btn btn-outline-success w-100 mt-2 info-btn" data-id="{{record_id}}">Info</button>
+                    <div class="d-flex gap-2 mb-2">
+                        <button class="btn btn-outline-secondary btn-sm save-btn" data-id="{{record_id}}">Save</button>
+                        <button class="btn btn-outline-primary flex-grow-1 add-to-cart" data-id="{{record_id}}">Add to
+                            Cart</button>
+                    </div>
+                    <button class="btn btn-outline-success w-100 info-btn" data-id="{{record_id}}">Info</button>
                 </div>
 
             </div>
@@ -147,6 +149,25 @@
             sessionStorage.setItem("cart", JSON.stringify(cart));
             updateCartCount();
         }
+        if (e.target.classList.contains("save-btn")) {
+            const id = e.target.dataset.id;
+            const saved = JSON.parse(sessionStorage.getItem("saved")) || [];
+            if (!saved.includes(id)) {
+                saved.push(id);
+                sessionStorage.setItem("saved", JSON.stringify(saved));
+                e.target.classList.add("btn-secondary");
+                e.target.classList.remove("btn-outline-secondary");
+                e.target.innerText = "Unsave";
+            }
+            else {
+                const index = saved.indexOf(id);
+                saved.splice(index, 1);
+                sessionStorage.setItem("saved", JSON.stringify(saved));
+                e.target.classList.add("btn-outline-secondary");
+                e.target.classList.remove("btn-secondary");
+                e.target.innerText = "Save";
+            }
+        }
     });
 
     const searchInput = document.getElementById("searchBar");
@@ -187,6 +208,18 @@
     window.addEventListener("load", () => {
         filteredCards = allCards;
         displayPage(1);
+        
+        // Update save button states based on saved items
+        const saved = JSON.parse(sessionStorage.getItem("saved")) || [];
+        allCards.forEach(card => {
+            const saveBtn = card.querySelector(".save-btn");
+            const recordId = saveBtn.dataset.id;
+            if (saved.includes(recordId)) {
+                saveBtn.classList.add("btn-secondary");
+                saveBtn.classList.remove("btn-outline-secondary");
+                saveBtn.innerText = "Unsave";
+            }
+        });
     });
 </script>
 </antml>
