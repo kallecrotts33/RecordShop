@@ -68,68 +68,18 @@ Genre.hasMany(Record, { foreignKey: 'genre_id' });
 Record.belongsTo(Genre, { foreignKey: 'genre_id' });
 
 // Route for navigation
-app.get("/", (req, res) => {
-    res.render("index", { title: "Main Page" });
-});
-app.get("/about", (req, res) => {
-    res.render("about", { title: "About" });
-});
-app.get("/products", async (req, res) => {
-    const records = await fetch("http://localhost:3000/api/records")
-        .then(r => r.json());
-
-    const artists = await fetch("http://localhost:3000/api/artists")
-        .then(r => r.json());
-
-    const genres = await fetch("http://localhost:3000/api/genres")
-        .then(r => r.json());
-    const enrichedRecords = records.map(record => {
-        const artist = artists.find(a => a.artist_id === record.artist_id);
-        const genre = genres.find(g => g.genre_id === record.genre_id);
-        return {
-            ...record,
-            artist_name: artist ? artist.artist_name : "Unknown Artist",
-            genre_name: genre ? genre.genre_name : "Unknown Genre"
-        };
-    });
-    res.render("products", { records: enrichedRecords, artists, genres, title: "Products" });
-
-});
-app.get("/savedItems", async (req, res) => {
-    const records = await fetch("http://localhost:3000/api/records")
-        .then(r => r.json());
-
-    const artists = await fetch("http://localhost:3000/api/artists")
-        .then(r => r.json());
-
-    const genres = await fetch("http://localhost:3000/api/genres")
-        .then(r => r.json());
-    const enrichedRecords = records.map(record => {
-        const artist = artists.find(a => a.artist_id === record.artist_id);
-        const genre = genres.find(g => g.genre_id === record.genre_id);
-        return {
-            ...record,
-            artist_name: artist ? artist.artist_name : "Unknown Artist",
-            genre_name: genre ? genre.genre_name : "Unknown Genre"
-        };
-    });
-    res.render("savedItems", { records: enrichedRecords, artists, genres, title: "Products" });
-
-});
-app.get("/recordInfo", async (req, res) => {
-    const id = req.query.id;
-    const record = await fetch(`http://localhost:3000/api/records/${id}`)
-        .then(r => r.json());
-    res.render("recordInfo", { record });
-});
-app.get("/cart", async (req, res) => {
-    const records = await fetch("http://localhost:3000/api/records")
-        .then(r => r.json());
-    res.render("cart", { records, title: "Shopping Cart" });
-});
-
-
-
+const indexRoute = require('./routes/web');
+app.use('/', indexRoute);
+const aboutRoute = require('./routes/web/about');
+app.use('/', aboutRoute);
+const cartRoute = require('./routes/web/cart');
+app.use('/', cartRoute);
+const productsRoute = require('./routes/web/products');
+app.use('/', productsRoute);
+const savedItemsRoute = require('./routes/web/savedItems');
+app.use('/', savedItemsRoute);
+const productInfoRoute = require('./routes/web/productInfo');
+app.use('/', productInfoRoute);
 
 // Start server
 const PORT = process.env.PORT || 3000;
