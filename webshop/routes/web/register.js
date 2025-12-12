@@ -10,12 +10,12 @@ router.post("/", async (req, res) => {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
         users.push({
             username: req.body.username,
-            password: hashedPassword
+            password: hashedPassword,
+            isAdmin: req.body.isAdmin
         });
         res.redirect("/login");
     } catch {
-        res.status(500).send("Error registering user");
-        return;
+        res.redirect("/register");
     }
 
 });
