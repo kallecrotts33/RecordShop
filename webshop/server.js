@@ -11,8 +11,10 @@ require('dotenv').config();
 const app = express();
 const { swaggerUi, swaggerSpec } = require('./swagger');
 const cors = require('cors');
+const bcrypt = require('bcrypt');
 app.use(cors());
 app.use(express.json()); 
+
 
 // Serve images folder at /images URL
 app.use('/images', express.static(path.join(__dirname, 'images')));
@@ -24,6 +26,7 @@ const sequelize = require('./config/database');
 const Record = require('./models/Record');
 const Artist = require('./models/Artist');
 const Genre = require('./models/Genre');
+const User = require('./models/User');
 
 const hbs = exphbs.create({
     helpers: {
@@ -43,6 +46,7 @@ app.engine("hbs", exphbs.engine({
 }));
 app.set("view engine", "hbs");
 
+
 // Middleware
 const logger = require('./middleware/logger');
 app.use(logger);
@@ -56,6 +60,8 @@ app.use('/api/artists', artistsRouter);
 const genresRouter = require('./routes/api/genres');
 const { title } = require("process");
 app.use('/api/genres', genresRouter);
+const usersRouter = require('./routes/api/users');
+app.use('/api/users', usersRouter);
 
 
 //Swagger docs route
@@ -80,6 +86,10 @@ const savedItemsRoute = require('./routes/web/savedItems');
 app.use('/', savedItemsRoute);
 const productInfoRoute = require('./routes/web/productInfo');
 app.use('/', productInfoRoute);
+const loginRoute = require('./routes/web/login');
+app.use('/login', loginRoute);
+const registerRoute = require('./routes/web/register');
+app.use('/register', registerRoute);
 
 // Start server
 const PORT = process.env.PORT || 3000;

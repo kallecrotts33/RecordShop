@@ -31,6 +31,10 @@ const options = {
         Genre: {
           type: 'object',
           properties: { genre_id: { type: 'integer' }, genre_name: { type: 'string' } }
+        },
+        User: {
+          type: 'object',
+          properties: { user_id: { type: 'integer' }, user_name: { type: 'string' } }
         }
       }
     }

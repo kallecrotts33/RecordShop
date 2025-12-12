@@ -18,6 +18,9 @@ async function initDb() {
     { record_title: "Eagles: The Legend of", price: 15.49, description: "Collection of great Eagles songs", image_src: ["front1", "back1", "sleeve1"], artist_id: artists[0].artist_id, genre_id: genres[0].genre_id}
   ]);
 
+  const users = await Genre.bulkCreate([
+  ]);
+
   console.log('Databas initierad med dummydata!');
   process.exit(0);
 }
