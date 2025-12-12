@@ -1,5 +1,9 @@
 const express = require('express');
-const router = express.Router();
+const router = express.Router(); // ✅
+const bcrypt = require('bcrypt');
+const User = require('../../models/User'); 
+
+
 
 router.get("/", (req, res) => {
     res.render("register", { title: "Register" });
@@ -7,16 +11,18 @@ router.get("/", (req, res) => {
 
 router.post("/", async (req, res) => {
     try {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
-        users.push({
-            username: req.body.username,
+        const { name, password, isAdmin } = req.body;
+        const hashedPassword = await bcrypt.hash(password, 10);
+        await User.create({
+            name: name,
             password: hashedPassword,
-            isAdmin: req.body.isAdmin
+            isAdmin: isAdmin ? true : false
         });
         res.redirect("/login");
-    } catch {
+    } catch (err) {
+        console.error("Error registering user:", err);
         res.redirect("/register");
     }
-
 });
+
 module.exports = router;

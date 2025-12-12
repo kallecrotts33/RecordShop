@@ -6,14 +6,17 @@
     <h1>Register</h1>
     <form method="POST" action="/register">
     <div class="form-group">
-        <label for="username">User Name: </label>
-        <input type="text" class="form-control" id="username" placeholder="Enter username">
+        <label for="name">User Name: </label>
+        <input type="text" class="form-control" name="name" placeholder="Enter username" required>
     </div>
     <div class="form-group">
         <label for="password">Password</label>
-        <input type="password" class="form-control" id="password" placeholder="Enter Password">
+        <input type="password" class="form-control" name="password" id="password" placeholder="Enter Password required">
     </div>
-    <input type="checkbox" id="isAdmin" name="isAdmin">
+    <div>
+        <label >isAdmin: </label>
+        <input type="checkbox" id="isAdmin" name="isAdmin">
+    </div>
     <button type="submit" class="btn btn-primary mt-3">Submit</button>
     
     </form>

@@ -3,13 +3,18 @@ const router = express.Router();
 const userController = require('../../controllers/userController');
 
 /**
- * @swagger
+ * @openapi
  * /api/users:
  *   get:
- *     summary: Get all users
+ *     summary: Lists all users
  *     responses:
  *       200:
- *         description: List of all users
+ *         description: OK
+ */
+
+/**
+ * @openapi
+ * /api/users:
  *   post:
  *     summary: Create a new user
  *     requestBody:
@@ -18,32 +23,56 @@ const userController = require('../../controllers/userController');
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - name
+ *               - password
  *             properties:
- *               user_name:
+ *               name:
  *                 type: string
+ *               password:
+ *                 type: string
+ *               isAdmin:
+ *                 type: boolean
  *     responses:
  *       201:
- *         description: user created
+ *         description: Created
+ *       400:
+ *         description: Validation error
+ */
+
+/**
+ * @openapi
  * /api/users/{id}:
  *   get:
- *     summary: Get user by ID
+ *     summary: Get a user by ID
  *     parameters:
  *       - in: path
  *         name: id
- *         required: true
  *         schema:
  *           type: integer
+ *         required: true
+ *         description: Numeric ID of the user
  *     responses:
  *       200:
- *         description: user found
+ *         description: User found
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Database error
+ */
+
+/**
+ * @openapi
+ * /api/users/{id}:
  *   put:
- *     summary: Update an user
+ *     summary: Update an existing user
  *     parameters:
  *       - in: path
  *         name: id
- *         required: true
  *         schema:
  *           type: integer
+ *         required: true
+ *         description: Numeric ID of the user
  *     requestBody:
  *       required: true
  *       content:
@@ -51,22 +80,40 @@ const userController = require('../../controllers/userController');
  *           schema:
  *             type: object
  *             properties:
- *               user_name:
+ *               name:
  *                 type: string
+ *               password:
+ *                 type: string
+ *               isAdmin:
+ *                 type: boolean
  *     responses:
  *       200:
- *         description: user updated
+ *         description: User updated
+ *       400:
+ *         description: Validation error
+ *       404:
+ *         description: User not found
+ */
+
+/**
+ * @openapi
+ * /api/users/{id}:
  *   delete:
- *     summary: Delete an user
+ *     summary: Delete a user by ID
  *     parameters:
  *       - in: path
  *         name: id
- *         required: true
  *         schema:
  *           type: integer
+ *         required: true
+ *         description: Numeric ID of the user
  *     responses:
  *       200:
- *         description: user deleted
+ *         description: User deleted
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Database error
  */
 
 router.get('/', userController.getAll);

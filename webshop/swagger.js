@@ -34,7 +34,7 @@ const options = {
         },
         User: {
           type: 'object',
-          properties: { user_id: { type: 'integer' }, user_name: { type: 'string' } }
+          properties: { user_id: { type: 'integer' }, name: { type: 'string' }, password: { type: 'string' }, isAdmin: { type: 'boolean' } }
         }
       }
     }
