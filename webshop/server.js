@@ -9,10 +9,10 @@ const port = process.env.DBWEBB_PORT || 1337;
 const express = require("express");
 const exphbs = require("express-handlebars");
 const path = require('path');
-require('dotenv').config();
 const app = express();
 const { swaggerUi, swaggerSpec } = require('./swagger');
 const cors = require('cors');
+require('dotenv').config();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -36,33 +36,7 @@ const User = require('./models/User');
 
 
 
-//passport
-if (process.env.NODE_ENV !== 'production') {
-    require('dotenv').config();
-}
 
-
-
-const passport = require('passport');
-const session = require('express-session');
-const flash = require('express-flash');
-const initializePassport = require('./config/passportConfig');
-
-initializePassport(
-    passport,
-    async name => await User.findOne({ where: { name } }),
-    async id => await User.findByPk(id)
-);
-
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false
-}));
-
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(flash());
 
 
 
@@ -98,6 +72,8 @@ app.set("view engine", "hbs");
 // Middleware
 const logger = require('./middleware/logger');
 app.use(logger);
+const setupAuth = require('./middleware/auth');
+setupAuth(app);
 
 
 
