@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const recordController = require('../../controllers/recordController');
+const checkIsAdmin = require('../../middleware/checkIsAdmin');
+
 
 /**
  * @openapi
@@ -67,7 +69,7 @@ router.get('/:id', recordController.getById);
  *       400:
  *         description: Validation error
  */
-router.post('/', recordController.create);
+router.post('/', checkIsAdmin, recordController.create);
 
 /**
  * @openapi
@@ -107,7 +109,7 @@ router.post('/', recordController.create);
  *       404:
  *         description: Not Found
  */
-router.put('/:id', recordController.update);
+router.put('/:id', checkIsAdmin, recordController.update);
 
 /**
  * @openapi
@@ -125,6 +127,6 @@ router.put('/:id', recordController.update);
  *       404:
  *         description: Not Found
  */
-router.delete('/:id', recordController.delete);
+router.delete('/:id', checkIsAdmin, recordController.delete);
 
 module.exports = router;

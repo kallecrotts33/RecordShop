@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const genreController = require('../../controllers/genreController');
+const checkIsAdmin = require('../../middleware/checkIsAdmin');
 
 /**
  * @swagger
@@ -71,8 +72,8 @@ const genreController = require('../../controllers/genreController');
 
 router.get('/', genreController.getAll);
 router.get('/:id', genreController.getById);
-router.post('/', genreController.create);
-router.put('/:id', genreController.update);
-router.delete('/:id', genreController.delete);
+router.post('/', checkIsAdmin, genreController.create);
+router.put('/:id', checkIsAdmin, genreController.update);
+router.delete('/:id', checkIsAdmin, genreController.delete);
 
 module.exports = router;
