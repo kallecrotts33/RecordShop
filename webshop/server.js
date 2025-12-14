@@ -106,6 +106,8 @@ app.use('/login', loginRoute);
 const registerRoute = require('./routes/web/register');
 app.use('/register', registerRoute);
 
+
+
 // Start server
 const PORT = process.env.PORT || 3000;
 sequelize.sync().then(() => {

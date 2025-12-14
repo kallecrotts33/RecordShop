@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const checkAuthenticated = require('../../middleware/checkAuthenticated');
 
-router.get("/savedItems", async (req, res) => {
+router.get("/savedItems", checkAuthenticated, async (req, res) => {
     const records = await fetch("http://localhost:3000/api/records")
         .then(r => r.json());
 
