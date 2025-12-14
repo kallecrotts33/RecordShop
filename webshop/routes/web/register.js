@@ -18,6 +18,7 @@ router.post("/", async (req, res) => {
             password: hashedPassword,
             isAdmin: isAdmin ? true : false
         });
+        console.log("User registered:", name);
         res.redirect("/login");
     } catch (err) {
         console.error("Error registering user:", err);

@@ -3,6 +3,8 @@
  */
 "use strict";
 
+
+
 const port = process.env.DBWEBB_PORT || 1337;
 const express = require("express");
 const exphbs = require("express-handlebars");
@@ -11,49 +13,9 @@ require('dotenv').config();
 const app = express();
 const { swaggerUi, swaggerSpec } = require('./swagger');
 const cors = require('cors');
-const bcrypt = require('bcrypt');
 app.use(cors());
-app.use(express.json()); 
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-
-
-
-// Serve images folder at /images URL
-app.use('/images', express.static(path.join(__dirname, 'images')));
-
-
-const sequelize = require('./config/database');
-
-// Modeller
-const Record = require('./models/Record');
-const Artist = require('./models/Artist');
-const Genre = require('./models/Genre');
-const User = require('./models/User');
-
-const hbs = exphbs.create({
-    helpers: {
-        json: function(context) {
-            return JSON.stringify(context);
-        }
-    }
-});
-app.engine('handlebars', hbs.engine);
-app.set('view engine', 'handlebars');
-
-
-// Configure Handlebars with main.hbs as default layout
-app.engine("hbs", exphbs.engine({ 
-    extname: ".hbs",
-    defaultLayout: "main" // Använder main.hbs som standardlayout
-}));
-app.set("view engine", "hbs");
-
-
-// Middleware
-const logger = require('./middleware/logger');
-app.use(logger);
-
 
 // API routes
 const recordsRouter = require('./routes/api/records');
@@ -65,6 +27,80 @@ const { title } = require("process");
 app.use('/api/genres', genresRouter);
 const usersRouter = require('./routes/api/users');
 app.use('/api/users', usersRouter);
+
+// Modeller
+const Record = require('./models/Record');
+const Artist = require('./models/Artist');
+const Genre = require('./models/Genre');
+const User = require('./models/User');
+
+
+
+//passport
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+}
+
+
+
+const passport = require('passport');
+const session = require('express-session');
+const flash = require('express-flash');
+const initializePassport = require('./config/passportConfig');
+
+initializePassport(
+    passport,
+    async name => await User.findOne({ where: { name } }),
+    async id => await User.findByPk(id)
+);
+
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
+
+
+
+
+
+
+// Serve images folder at /images URL
+app.use('/images', express.static(path.join(__dirname, 'images')));
+
+
+const sequelize = require('./config/database');
+
+
+
+const hbs = exphbs.create({
+    helpers: {
+        json: function (context) {
+            return JSON.stringify(context);
+        }
+    }
+});
+
+
+
+// Configure Handlebars with main.hbs as default layout
+app.engine("hbs", exphbs.engine({
+    extname: ".hbs",
+    defaultLayout: "main" // Använder main.hbs som standardlayout
+}));
+app.set("view engine", "hbs");
+
+
+// Middleware
+const logger = require('./middleware/logger');
+app.use(logger);
+
+
+
 
 
 //Swagger docs route
@@ -97,7 +133,7 @@ app.use('/register', registerRoute);
 // Start server
 const PORT = process.env.PORT || 3000;
 sequelize.sync().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server: http://localhost:${PORT}`);
-  });
+    app.listen(PORT, () => {
+        console.log(`Server: http://localhost:${PORT}`);
+    });
 });
