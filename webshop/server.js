@@ -89,6 +89,11 @@ Genre.hasMany(Record, { foreignKey: 'genre_id' });
 Record.belongsTo(Genre, { foreignKey: 'genre_id' });
 
 // Route for navigation
+app.use('/logout', require('./routes/web/logout'));
+app.use((req, res, next) => {
+    res.locals.user = req.user ? req.user.get({ plain: true }) : null;
+    next();
+});
 const indexRoute = require('./routes/web');
 app.use('/', indexRoute);
 const aboutRoute = require('./routes/web/about');
@@ -105,6 +110,8 @@ const loginRoute = require('./routes/web/login');
 app.use('/login', loginRoute);
 const registerRoute = require('./routes/web/register');
 app.use('/register', registerRoute);
+
+
 
 
 

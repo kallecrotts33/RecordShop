@@ -26,5 +26,4 @@ function setupAuth(app) {
     app.use(flash());
 
 }
-
 module.exports = setupAuth;
