@@ -62,17 +62,16 @@
 </html>
 
 <script>
-    function updateCartCount() {
-        // Get the cart object from sessionStorage
-        const cart = JSON.parse(sessionStorage.getItem("cart")) || {};
-        // Sum all quantities
-        const totalCount = Object.values(cart).reduce((total, qty) => total + qty, 0);
-        // Update the cart element
-        const cartElement = document.getElementById('currentInCart');
-        if (cartElement) {
-            cartElement.textContent = `Cart (${totalCount})`;
-        }
-    }
-    document.addEventListener('DOMContentLoaded', updateCartCount);
+    // Initialize global userId/cartKey only once and expose updateCartCount
+    window.userId = typeof window.userId !== 'undefined' ? window.userId : {{#if user}}{{user.user_id}}{{else}}null{{/if}};
+    window.cartKey = typeof window.cartKey !== 'undefined' ? window.cartKey : (window.userId !== null ? `cart_${window.userId}` : 'cart');
 
+    window.updateCartCount = function () {
+        const cart = JSON.parse(sessionStorage.getItem(window.cartKey) || '{}');
+        const totalCount = Object.values(cart).reduce((sum, q) => sum + q, 0);
+        const el = document.getElementById('currentInCart');
+        if (el) el.textContent = `Cart (${totalCount})`;
+    };
+
+    document.addEventListener('DOMContentLoaded', window.updateCartCount);
 </script>

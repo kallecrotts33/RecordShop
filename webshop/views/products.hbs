@@ -90,6 +90,7 @@
     let allCards = [];
     let filteredCards = [];
     let itemsPerPage = 4;
+    let userId = {{#if user}}{{user.user_id}}{{else}}null{{/if}};
 
     document.addEventListener("DOMContentLoaded", () => {
         allCards = Array.from(document.querySelectorAll("#recordGrid .record-card"));
@@ -138,15 +139,22 @@
             const id = e.target.dataset.id;
             window.location.href = `/recordInfo?id=${id}`;
         }
-        if (e.target.classList.contains("add-to-cart")) {
+
+        if (e.target.classList.contains("add-to-cart") && userId !== null) {
+            
             const id = e.target.dataset.id;
-            const cart = JSON.parse(sessionStorage.getItem("cart")) || {};
+
+            // Get the cart for this specific user
+            const cartKey = `cart_${userId}`;
+            const cart = JSON.parse(sessionStorage.getItem(cartKey)) || {};
+
             if (cart[id]) {
                 cart[id] += 1;
             } else {
                 cart[id] = 1;
             }
-            sessionStorage.setItem("cart", JSON.stringify(cart));
+
+            sessionStorage.setItem(cartKey, JSON.stringify(cart));
             updateCartCount();
         }
         if (e.target.classList.contains("save-btn")) {
@@ -208,7 +216,7 @@
     window.addEventListener("load", () => {
         filteredCards = allCards;
         displayPage(1);
-        
+
         // Update save button states based on saved items
         const saved = JSON.parse(sessionStorage.getItem("saved")) || [];
         allCards.forEach(card => {

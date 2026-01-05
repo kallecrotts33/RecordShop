@@ -5,9 +5,6 @@
     }
 </style>
 
-
-
-
 <div class="container mt-5 text-center bg-light p-4 rounded">
     <h1>Shopping Cart</h1>
     <p>These are the products in your cart</p>
@@ -42,11 +39,13 @@
     </div>
 </div>
 
-
-
 <script>
+    // Use per-user cart key when logged in, fallback to 'cart' for guests
+    let userId = {{#if user}}{{user.user_id}}{{else}}null{{/if}};
+    const cartKey = userId !== null ? `cart_${userId}` : 'cart';
+
     document.addEventListener('DOMContentLoaded', () => {
-        const cart = JSON.parse(sessionStorage.getItem('cart') || '{}');
+        const cart = JSON.parse(sessionStorage.getItem(cartKey) || '{}');
 
         // Show only items in the cart and display their quantity
         document.querySelectorAll('.cart-item').forEach(item => {
@@ -59,13 +58,14 @@
 
         // Function to calculate and display total price
         function updateTotal() {
+            const currentCart = JSON.parse(sessionStorage.getItem(cartKey) || '{}');
             let totalPrice = 0;
             document.querySelectorAll('.cart-item').forEach(item => {
                 const id = item.dataset.id;
-                if (cart[id]) {
+                if (currentCart[id]) {
                     const priceText = item.querySelector('.card-text-price').innerText;
                     const price = parseFloat(priceText.replace('€', ''));
-                    totalPrice += price * cart[id];
+                    totalPrice += price * currentCart[id];
                 }
             });
             const totalPriceEl = document.querySelector('.total-price');
@@ -87,9 +87,9 @@
                     delete cart[id];
                     e.target.closest('.cart-item').remove();
                 }
-                sessionStorage.setItem('cart', JSON.stringify(cart));
+                sessionStorage.setItem(cartKey, JSON.stringify(cart));
                 updateTotal();
-                updateCartCount();
+                if (typeof updateCartCount === 'function') updateCartCount();
             });
         });
     });
