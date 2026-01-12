@@ -34,6 +34,8 @@ const checkIsAdmin = require('../../middleware/checkIsAdmin');
  *                 type: string
  *               isAdmin:
  *                 type: boolean
+ *               cart_items:
+ *                 type: object  
  *     responses:
  *       201:
  *         description: Created
@@ -87,6 +89,8 @@ const checkIsAdmin = require('../../middleware/checkIsAdmin');
  *                 type: string
  *               isAdmin:
  *                 type: boolean
+ *               cart_items:
+ *                 type: object  
  *     responses:
  *       200:
  *         description: User updated

@@ -9,7 +9,8 @@ const User = sequelize.define('User', {
     },
     name: { type: DataTypes.STRING, allowNull: false },
     password: { type: DataTypes.STRING, allowNull: false },
-    isAdmin: { type: DataTypes.BOOLEAN, defaultValue: false }
+    isAdmin: { type: DataTypes.BOOLEAN, defaultValue: false },
+    cart_items: { type: DataTypes.JSON, allowNull: false, defaultValue: {} }
 }, 
 
 { tableName: 'users', timestamps: false });
